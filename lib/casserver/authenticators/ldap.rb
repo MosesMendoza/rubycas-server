@@ -101,8 +101,13 @@ class CASServer::Authenticators::LDAP < CASServer::Authenticators::Base
     # Finds the user based on the user_filter (this is called after authentication).
     # We do this to make it possible to extract extra_attributes.
     def find_user
-      results = @ldap.search( :base => options[:ldap][:base], :filter => user_filter)
-      return results.first
+      result = @ldap.search( :base => options[:ldap][:base], :filter => user_filter, :return_result => true )
+
+      if result.is_a? Array
+        result = result.first
+      end
+
+      return result
     end
 
     def extract_extra_attributes(ldap_entry)
