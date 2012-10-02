@@ -288,6 +288,30 @@ module CASServer
       end
     end
 
+    def cookies(cookie_name)
+      if CASServer::Server.config['session_secret'].nil?
+        request.cookies[cookie_name]
+      else
+        session[cookie_name]
+      end
+    end
+
+    def set_cookie(cookie_name, data)
+      if CASServer::Server.config['session_secret'].nil?
+        response.set_cookie(cookie_name, data)
+      else
+        session[cookie_name] = data
+      end
+    end
+
+    def clear_cookie(cookie_name)
+      if CASServer::Server.config['session_secret'].nil?
+        response.delete_cookie cookie_name
+      else
+        session.clear
+      end
+    end
+
     # The #.#.# comments (e.g. "2.1.3") refer to section numbers in the CAS protocol spec
     # under http://www.ja-sig.org/products/cas/overview/protocol/index.html
 
@@ -307,7 +331,7 @@ module CASServer
       @renew = params['renew']
       @gateway = params['gateway'] == 'true' || params['gateway'] == '1'
 
-      if tgc = request.cookies['tgt']
+      if tgc = cookies('tgt')
         tgt, tgt_error = validate_ticket_granting_ticket(tgc)
       end
 
@@ -459,7 +483,7 @@ module CASServer
 
           # 3.6 (ticket-granting cookie)
           tgt = generate_ticket_granting_ticket(@username, successful_authenticator.class.name, extra_attributes)
-          response.set_cookie('tgt', tgt.to_s)
+          set_cookie('tgt', tgt.to_s)
 
           $LOG.debug("Ticket granting cookie '#{tgt.inspect}' granted to #{@username.inspect}")
 
@@ -518,9 +542,9 @@ module CASServer
 
       @gateway = params['gateway'] == 'true' || params['gateway'] == '1'
 
-      tgt = CASServer::Model::TicketGrantingTicket.find_by_ticket(request.cookies['tgt'])
+      tgt = CASServer::Model::TicketGrantingTicket.find_by_ticket(cookies('tgt'))
 
-      response.delete_cookie 'tgt'
+      clear_cookie('tgt')
 
       if tgt
         CASServer::Model::TicketGrantingTicket.transaction do
