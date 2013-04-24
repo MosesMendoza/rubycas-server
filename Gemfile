@@ -9,4 +9,6 @@ end
 
 group :active_resource do
   gem "activeresource", ">= 2.3.12", "< 4.0"
+  gem "pg"
+  gem "activerecord-postgresql-adapter"
 end
