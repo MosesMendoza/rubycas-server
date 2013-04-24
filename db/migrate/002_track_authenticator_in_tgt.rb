@@ -1,6 +1,6 @@
 class TrackAuthenticatorInTgt < ActiveRecord::Migration
   def self.up
-    add_column 'casserver_tgt', 'authenticator', :string, :limit => 64, :null => false
+    add_column 'casserver_tgt', 'authenticator', :string, :limit => 64, :null => false, :default => ''
   end
 
   def self.down
