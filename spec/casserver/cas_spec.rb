@@ -44,10 +44,10 @@ describe CASServer::CAS do
     end
   end
 
-  describe "#generate_ticket_granting_ticket(username, extra_attributes = {})" do
+  describe "#generate_ticket_granting_ticket(username, authenticator, extra_attributes = {})" do
     before do
       @username = 'myuser'
-      @tgt = @host.generate_ticket_granting_ticket(@username)
+      @tgt = @host.generate_ticket_granting_ticket(@username, 'CASServer::Authenticators::LDAP')
     end
 
     it "should return a TicketGrantingTicket" do
