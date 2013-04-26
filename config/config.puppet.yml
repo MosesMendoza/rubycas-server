@@ -1,0 +1,81 @@
+
+# Configuration for running RubyCAS as a standalone server
+server: webrick
+port: 9292
+
+# By default the login page will be available at the root path 
+# (e.g. https://login.example.net/). The uri_path option lets you serve it from a 
+# different path (e.g. https://login.example.net/cas).
+uri_path: /cas
+
+# Database
+database:
+  adapter: postgresql 
+  database: console_auth
+  username: 
+  password: 
+  host: localhost
+  reconnect: true
+
+# Authenticators
+
+authenticator:
+  - class: CASServer::Authenticators::SQLEncrypted
+    database:
+      adapter: postgresql 
+      database: console_auth
+      username: 
+      password: 
+      server: localhost
+    user_table: users
+    username_column: username
+  - class: CASServer::Authenticators::Google
+    restricted_domain: puppetlabs.com
+  - class: CASServer::Authenticators::LDAP
+    ldap:
+      host: tb-driver.puppetlabs.lan
+      port: 389
+      base: dc=puppet,dc=test
+      filter: (objectClass=person)
+      username_attribute: mail
+  - class: CASServer::Authenticators::ActiveDirectoryLDAP
+    ldap:
+      host: win2003r2-ad-dev.puppetlabs.lan
+      port: 389
+      base: dc=puppetlabs,dc=dev
+      filter: (memberOf=CN=Puppet Users,CN=Users,DC=puppetlabs,DC=dev)
+      auth_user: cn=Test I. Am,cn=users,dc=puppetlabs,dc=dev
+      auth_password: P4ssword
+
+# Custom views and public directories
+# These will be used to provide layout and styling for the CAS login page. They should point to the `src/views` and
+# `src/public` directories in a `console_auth` checkout.
+custom_views: ../console_auth/src/views
+public_dir: ../console_auth/src/public
+
+default_locale: en
+
+# Logging
+# Set the level to DEBUG if you need to
+log:
+  file: /tmp/cas.log
+  level: INFO
+
+# If you want full database logging, uncomment this next section.
+# Every SQL query will be logged here. This is useful for debugging database 
+# problems.
+
+#db_log:
+#  file: /var/log/casserver_db.log
+
+# Setting the following option to true will disable CLI output to stdout.
+# i.e. this will get rid of messages like ">>> Redirecting RubyCAS-Server log..."
+# This is useful when, for example, you're running rspecs.
+
+#quiet: true
+
+# Other RubyCAS config
+enable_single_sign_out: true
+maximum_unused_login_ticket_lifetime: 300
+maximum_unused_service_ticket_lifetime: 300
+maximum_session_lifetime: 172800

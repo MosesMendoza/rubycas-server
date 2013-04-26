@@ -18,3 +18,5 @@ resources/dev
 .bundle
 .vagrant
 Vagrantfile
+.ruby-version
+vendor
