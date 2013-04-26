@@ -1,8 +1,10 @@
 # encoding: UTF-8
+xml.instruct! :xml, :version=>"1.0", :encoding=>"UTF-8"
 if @success
   xml.tag!("cas:serviceResponse", 'xmlns:cas' => "http://www.yale.edu/tp/cas") do
     xml.tag!("cas:authenticationSuccess") do
       xml.tag!("cas:user", @username.to_s)
+      xml.tag!("cas:authenticator", @authenticator.to_s)
       @extra_attributes.each do |key, value|
         serialize_extra_attribute(xml, key, value)
       end

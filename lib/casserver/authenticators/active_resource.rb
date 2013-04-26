@@ -1,21 +1,7 @@
-require 'casserver/authenticators/base'
-
 begin
   require 'active_resource'
 rescue LoadError
-  require 'rubygems'
-  begin
-    gem 'activeresource', '~> 3.0.0'
-  rescue Gem::LoadError
-    $stderr.puts
-    $stderr.puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    $stderr.puts
-    $stderr.puts "To use the ActiveResource authenticator, you must first install the 'activeresource' gem."
-    $stderr.puts
-    $stderr.puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    exit 1
-  end
-  require 'active_resource'
+  $stderr.puts "To use the ActiveResource authenticator, you must first install gems from active_resource group. See: Gemfile"
 end
 
 module CASServer
@@ -117,7 +103,7 @@ module CASServer
         elsif @options[:filter_attributes].kind_of? String
           attrs = @options[:filter_attributes].split(',').collect { |col| col.strip }
         else
-          $LOG.error("Can't figure out attribute list from #{@options[:filter_attributes].inspect}. This must be an Aarray of column names or a comma-separated list.")
+          $LOG.error("Can't figure out attribute list from #{@options[:filter_attributes].inspect}. This must be an Array of column names or a comma-separated list.")
           attrs = []
         end
         attrs

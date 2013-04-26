@@ -1,4 +1,3 @@
-require 'casserver/authenticators/base'
 require 'uri'
 require 'net/http'
 require 'net/https'
@@ -12,6 +11,11 @@ class CASServer::Authenticators::Google < CASServer::Authenticators::Base
     read_standard_credentials(credentials)
 
     return false if @username.blank? || @password.blank?
+
+    if @options[:restricted_domain]
+      return false if @username.count('@') != 1
+      return false if @username.split('@').last != @options[:restricted_domain]
+    end
 
     auth_data = {
       'Email'   => @username,
