@@ -276,6 +276,7 @@ module CASServer
 
     before do
       content_type :html, 'charset' => 'utf-8'
+      @console_base_url = settings.config[:console_base_url]
       @theme = settings.config[:theme]
       @organization = settings.config[:organization]
       @uri_path = settings.config[:uri_path]

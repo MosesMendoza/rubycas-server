@@ -52,6 +52,7 @@ authenticator:
 # `src/public` directories in a `console_auth` checkout.
 custom_views: ../console_auth/src/views
 public_dir: ../console_auth/src/public
+console_base_url: http://localhost:3000/
 
 default_locale: en
 
