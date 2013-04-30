@@ -1,3 +1,7 @@
+# STAHP
+
+If you want to install `pe-puppet-dashboard` this is the first step.
+
 # RubyCAS-Server
 
 ## Copyright
@@ -13,21 +17,20 @@ See https://github.com/rubycas/rubycas-server/commits
 
 Example with Postgres database:
 
-1. `git clone git://github.com/puppetlabs/rubycas-server.git`
-2. `cd rubycas-server`
-3. `cp config/config.puppet.yml config.yml`
-4. Customize your server by modifying the `config.yml` file. It is well commented but make sure that you take care of the following:
-    1. Verify the database adapter is `postgresql`
-    2. Make sure at least one authenticator is configured
-    3. Make sure the log file location has `+w`
-5. Run `bundle install`
-6. `bundle exec rubycas-server -c config.yml`
-
-Your RubyCAS-Server should now be running. Once you've confirmed that everything looks good, try switching to a [Passenger](http://www.modrails.com/) deployment. You should be able to point Apache (or whatever) to the `rubycas-server/public` directory, and everything should just work.
-
-Some more info is available at the [RubyCAS-Server Wiki](https://github.com/rubycas/rubycas-server/wiki).
-
-If you have questions, try the [RubyCAS Google Group](https://groups.google.com/forum/?fromgroups#!forum/rubycas-server) or #rubycas on [freenode](http://freenode.net).
+* Install Postgres
+* Create a Postgres DB cluster if you don't already have one: `initdb /usr/local/var/postgres -E utf8`
+* Create the database needed for console auth, if it doesn't already exist: `createdb console_auth`
+* Check out the Puppet fork of `rubycas-server`: `git clone git://github.com/puppetlabs/rubycas-server.git`
+* Copy the example Puppet config file to the code root: `cp config/config.puppet.yml config.yml`
+* Customize your server by modifying the `config.yml` file. It is well commented but make sure that you take care of the following:
+    1. Verify the database adapter is `postgresql` and that you have a working username and password.
+    2. Add the same database credentials to the SQLEncrypted authenticator section.
+    3. Make sure at least one authenticator is configured
+    4. Make sure the log file location has `+w`
+* Run `bundle install --path vendor/bundle` to install the required gems
+* Run `bundle exec rake db:migrate` to install the database tables for RubyCAS server (you may see a message from `rake` about an uninitialized constant, but this is after the database has been created and you can ignore it)
+* Switch over to the `console_auth` project and install it: https://github.com/puppetlabs/console_auth
+* Run `bundle exec rubycas-server -c config.yml` to start the RubyCAS server
 
 ## Testing
 
