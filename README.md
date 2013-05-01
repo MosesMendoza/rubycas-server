@@ -27,6 +27,7 @@ Example with Postgres database:
     2. Add the same database credentials to the SQLEncrypted authenticator section.
     3. Make sure at least one authenticator is configured
     4. Make sure the log file location has `+w`
+    5. Make sure `console_url` is set to the url for your dashboard (i.e. the IP for your server)
 * Run `bundle install --path vendor/bundle` to install the required gems
 * Run `bundle exec rake db:migrate` to install the database tables for RubyCAS server (you may see a message from `rake` about an uninitialized constant, but this is after the database has been created and you can ignore it)
 * Switch over to the `console_auth` project and install it: https://github.com/puppetlabs/console_auth
