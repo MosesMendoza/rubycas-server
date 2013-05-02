@@ -20,3 +20,4 @@ resources/dev
 Vagrantfile
 .ruby-version
 vendor
+ext/packaging
