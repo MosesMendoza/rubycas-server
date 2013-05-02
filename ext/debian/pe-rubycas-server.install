@@ -1,0 +1,9 @@
+config/rubycas-server.vhost.conf etc/puppetlabs/httpd/console_apps.d/rubycas-server.conf
+db opt/puppet/share/rubycas-server
+gemfiles opt/puppet/share/rubycas-server
+lib opt/puppet/share/rubycas-server
+locales opt/puppet/share/rubycas-server
+public opt/puppet/share/rubycas-server
+tasks opt/puppet/share/rubycas-server
+Rakefile opt/puppet/share/rubycas-server
+config.ru opt/puppet/share/rubycas-server

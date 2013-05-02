@@ -1,0 +1,106 @@
+%global _real_name console
+# VERSION is subbed out during rake srpm process
+%global realversion <%= @version %>
+%global rpmversion <%= @rpmversion %>
+
+Name:           pe-%{_real_name}
+Version:        %{rpmversion}
+Release:        1.pe%{?dist}
+Summary:        Base Application for Puppet Enterpise Console
+
+License:        PL Commercial
+URL:            http://puppetlabs.com/puppet/puppet-enterprise
+Source0:        %{name}-%{realversion}.tar.gz
+
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Group:          Development/Languages
+
+BuildRequires:  pe-console-auth
+BuildArch:      noarch
+
+Requires:       pe-console-auth
+
+%description
+Base Application for Puppet Enterprise Console
+
+%package        test
+Requires:       %{name} = %{version}-%{release}
+Group:          Development/Languages
+Summary:        Unit tests for the Puppet Enterprise Console
+
+%description test
+Tests for the Puppet Enterprise Console
+
+%prep
+%setup -q -n %{name}-%{realversion}
+
+%build
+%install
+rm -rf $RPM_BUILD_ROOT
+
+# Setup directories
+install -d -m0755 $RPM_BUILD_ROOT/opt/puppet/share/%{_real_name}
+install -d -m0755 $RPM_BUILD_ROOT%{_sysconfdir}/puppetlabs/%{_real_name}
+install -d -m0755 $RPM_BUILD_ROOT%{_sysconfdir}/puppetlabs/httpd/console_apps.d/
+install -d -m0755 $RPM_BUILD_ROOT/opt/puppet/share/%{_real_name}/config
+
+cp -pr {classes,lib,models,public,views,config.ru} $RPM_BUILD_ROOT/opt/puppet/share/%{_real_name}
+chmod uog+Xr -R $RPM_BUILD_ROOT/opt/puppet/share/%{_real_name}
+
+install -m0644 ext/console.conf $RPM_BUILD_ROOT%{_sysconfdir}/puppetlabs/httpd/console_apps.d/
+install -m0644 ext/config.yml $RPM_BUILD_ROOT/opt/puppet/share/%{_real_name}/config/
+
+find $RPM_BUILD_ROOT/opt/puppet/share/%{_real_name} -type f | xargs chmod 644
+
+cd $RPM_BUILD_ROOT/opt/puppet/share/puppet-dashboard/public; \
+  ln -sf ../../console/public console
+
+# Ensure the ruby referenced is opt/puppet/bin
+for file in `find $RPM_BUILD_ROOT/opt/puppet -type f`; do
+  sed -i -e '1s,^#!.*ruby$,#!/opt/puppet/bin/ruby,' $file
+done
+
+# Setup log files
+install -d -m0775 $RPM_BUILD_ROOT/var/log/%{name}
+
+%files
+%defattr(-,puppet-dashboard,puppet-dashboard,-)
+/opt/puppet/share/%{_real_name}
+# Exclude test files that go in the test package
+%exclude /opt/puppet/share/%{_real_name}/public/js/test
+%exclude /opt/puppet/share/%{_real_name}/public/spec
+%dir %{_sysconfdir}/puppetlabs/%{_real_name}
+%dir %{_sysconfdir}/puppetlabs/httpd/console_apps.d
+%{_sysconfdir}/puppetlabs/httpd/console_apps.d/console.conf
+%attr(775, puppet-dashboard, puppet-dashboard) /var/log/%{name}
+/opt/puppet/share/puppet-dashboard/public/console
+
+# Ensure correct permissions on config.ru files
+%attr(644, puppet-dashboard, puppet-dashboard) /opt/puppet/share/%{_real_name}/config.ru
+
+%files test
+%defattr(-,puppet-dashboard,puppet-dashboard,-)
+/opt/puppet/share/%{_real_name}/public/js/test
+/opt/puppet/share/%{_real_name}/public/spec
+
+%changelog
+* <%= Time.now.strftime("%a %b %d %Y") %> Puppet Labs Release <info@puppetlabs.com> - <%= @rpmversion %>-<%= @rpmrelease %>
+- Build for <%= @version %>
+
+* Wed Oct 31 2012 Moses Mendoza <moses@puppetlabs.com> - 0.2.1-2.pe
+- Separate out a test package
+
+* Mon Oct 29 2012 Matthaus Owens <matthaus@puppetlabs.com> - 0.2.1-1.pe
+- Update to console 0.2.1
+
+* Fri Oct 26 2012 Matthaus Owens <matthaus@puppetlabs.com> - 0.2.0-2.pe
+- Add symlink to console/public => dashboard/public
+
+* Wed Oct 24 2012 Matthaus Owens <matthaus@puppetlabs.com> - 0.2.0-1.pe
+- Build for 0.2.0, add console.conf, config.yml
+
+* Tue Oct 23 2012 Moses Mendoza <moses@puppetlabs.com> - 0.1.1-1.pe
+- Build for 0.1.1
+
+* Mon Oct 08 2012 Matthaus Owens <matthaus@puppetlabs.com> - 0.1.0-1.pe
+- Initial build
