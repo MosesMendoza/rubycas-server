@@ -1,0 +1,14 @@
+Source: pe-rubycas-server
+Section: ruby
+Priority: optional
+Maintainer: Puppet Labs <info@puppetlabs.com>
+Build-Depends: cdbs, debhelper (>> 7)
+Build-Depends-Indep: pe-puppet-dashboard
+Standards-Version: 3.9.1
+Homepage: http://puppetlabs.com/enterprise
+
+Package: pe-rubycas-server
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, pe-puppet-dashboard
+Description:CAS for Console
+ Fork of rubycas-server

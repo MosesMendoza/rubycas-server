@@ -1,0 +1,3 @@
+dir-or-file-in-opt opt/puppet/*
+no-copyright-file
+embedded-javascript-library opt/puppet/share/rubycas-server/public/*

@@ -1,0 +1,9 @@
+---
+project: 'pe-rubycas-server'
+author: 'Puppet Labs'
+email: 'info@puppetlabs.com'
+homepage: 'http://github.com/puppetlabs/rubycas-server'
+summary: 'PE Fork of Rubycas Server'
+description: 'CAS for Puppet Enterprise Console'
+files: 'Rakefile config db ext gemfiles lib locales public tasks config.ru'
+tar_excludes: 'lib/tasks/packaging.rb ext/packaging ext/build_defaults.yaml ext/project_data.yaml'

@@ -1,0 +1,2 @@
+etc/puppetlabs/rubycas-server/config.yml     opt/puppet/share/rubycas-server/config.yml
+opt/puppet/share/rubycas-server/public       opt/puppet/share/puppet-dashboard/public/cas
