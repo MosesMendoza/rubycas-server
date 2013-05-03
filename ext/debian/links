@@ -1,1 +1,2 @@
-etc/puppetlabs/rubycas-server/config.yml opt/puppet/share/rubycas-server/config.yml
+etc/puppetlabs/rubycas-server/config.yml     opt/puppet/share/rubycas-server/config.yml
+opt/puppet/share/puppet-dashboard/public/cas opt/puppet/share/rubycas-server/public
