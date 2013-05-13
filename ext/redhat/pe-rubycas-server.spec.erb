@@ -1,35 +1,37 @@
-%global _real_name console
+%global _name             rubycas-server
 # VERSION is subbed out during rake srpm process
-%global realversion <%= @version %>
-%global rpmversion <%= @rpmversion %>
+%global realversion       <%= @version %>
+%global rpmversion        <%= @rpmversion %>
 
-Name:           pe-%{_real_name}
+%global name_prefix       pe-
+%global _real_sysconfdir  %{_sysconfdir}
+%global _orig_prefix      %{_prefix}
+%global _prefix           /opt/puppet
+%global _sysconfdir       %{_real_sysconfdir}/puppetlabs
+
+Name:           %{name_prefix}%{_name}
 Version:        %{rpmversion}
 Release:        1.pe%{?dist}
-Summary:        Base Application for Puppet Enterpise Console
+Summary:        Single sign-on authentication for web applications
 
-License:        PL Commercial
-URL:            http://puppetlabs.com/puppet/puppet-enterprise
+License:        MIT
+URL:            http://rubycas.github.io/
 Source0:        %{name}-%{realversion}.tar.gz
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Group:          Development/Languages
 
-BuildRequires:  pe-console-auth
 BuildArch:      noarch
 
+BuildRequires:  pe-puppet-dashboard
+BuildRequires:  pe-console-auth
+
+Requires:       pe-puppet-dashboard
 Requires:       pe-console-auth
 
 %description
-Base Application for Puppet Enterprise Console
-
-%package        test
-Requires:       %{name} = %{version}-%{release}
-Group:          Development/Languages
-Summary:        Unit tests for the Puppet Enterprise Console
-
-%description test
-Tests for the Puppet Enterprise Console
+Single sign-on authentication for web applications, implementing the server-end
+of Jasig's CAS protocol
 
 %prep
 %setup -q -n %{name}-%{realversion}
@@ -39,68 +41,43 @@ Tests for the Puppet Enterprise Console
 rm -rf $RPM_BUILD_ROOT
 
 # Setup directories
-install -d -m0755 $RPM_BUILD_ROOT/opt/puppet/share/%{_real_name}
-install -d -m0755 $RPM_BUILD_ROOT%{_sysconfdir}/puppetlabs/%{_real_name}
-install -d -m0755 $RPM_BUILD_ROOT%{_sysconfdir}/puppetlabs/httpd/console_apps.d/
-install -d -m0755 $RPM_BUILD_ROOT/opt/puppet/share/%{_real_name}/config
+install -d -m0755 $RPM_BUILD_ROOT%{_sysconfdir}/%{_name}
+install -d -m0755 $RPM_BUILD_ROOT%{_sysconfdir}/httpd/console_apps.d
+install -d -m0755 $RPM_BUILD_ROOT%{_datadir}/%{_name}
 
-cp -pr {classes,lib,models,public,views,config.ru} $RPM_BUILD_ROOT/opt/puppet/share/%{_real_name}
+cp -pr {db,gemfiles,lib,locales,public,tasks,Rakefile,config.ru} \
+  $RPM_BUILD_ROOT%{_datadir}%{_name}
+
 chmod uog+Xr -R $RPM_BUILD_ROOT/opt/puppet/share/%{_real_name}
 
-install -m0644 ext/console.conf $RPM_BUILD_ROOT%{_sysconfdir}/puppetlabs/httpd/console_apps.d/
-install -m0644 ext/config.yml $RPM_BUILD_ROOT/opt/puppet/share/%{_real_name}/config/
+install -m0644 config/rubycas-server.vhost.conf %{_sysconfdir}/httpd/console_apps.d/
 
-find $RPM_BUILD_ROOT/opt/puppet/share/%{_real_name} -type f | xargs chmod 644
+find $RPM_BUILD_ROOT%{_datadir}/%{_name} -type f | xargs chmod 644
 
-cd $RPM_BUILD_ROOT/opt/puppet/share/puppet-dashboard/public; \
-  ln -sf ../../console/public console
+cd $RPM_BUILD_ROOT%{_datadir}/%{_name} ; \
+  ln -sf %{_sysconfdir}/%{_name}/config.yml config.yml
+
+cd $RPM_BUILD_ROOT%{_datadir}/puppet-dashboard/public ; \
+  ln -sf ../../%{_name}/public cas
 
 # Ensure the ruby referenced is opt/puppet/bin
 for file in `find $RPM_BUILD_ROOT/opt/puppet -type f`; do
   sed -i -e '1s,^#!.*ruby$,#!/opt/puppet/bin/ruby,' $file
 done
 
-# Setup log files
-install -d -m0775 $RPM_BUILD_ROOT/var/log/%{name}
-
 %files
-%defattr(-,puppet-dashboard,puppet-dashboard,-)
-/opt/puppet/share/%{_real_name}
-# Exclude test files that go in the test package
-%exclude /opt/puppet/share/%{_real_name}/public/js/test
-%exclude /opt/puppet/share/%{_real_name}/public/spec
-%dir %{_sysconfdir}/puppetlabs/%{_real_name}
-%dir %{_sysconfdir}/puppetlabs/httpd/console_apps.d
-%{_sysconfdir}/puppetlabs/httpd/console_apps.d/console.conf
-%attr(775, puppet-dashboard, puppet-dashboard) /var/log/%{name}
-/opt/puppet/share/puppet-dashboard/public/console
+%{_datadir}/%{_name}
+%{_sysconfdir}/%{_name}
+%{_sysconfdir}/httpd/console_apps.d/rubycas-server.vhost.conf
+%{_datadir}/puppet-dashboard/public/cas
 
-# Ensure correct permissions on config.ru files
-%attr(644, puppet-dashboard, puppet-dashboard) /opt/puppet/share/%{_real_name}/config.ru
-
-%files test
-%defattr(-,puppet-dashboard,puppet-dashboard,-)
-/opt/puppet/share/%{_real_name}/public/js/test
-/opt/puppet/share/%{_real_name}/public/spec
+# Ensure correct permissions on config.ru file
+%attr(644, pe-auth, pe-auth) %{_datadir}%{_real_name}/config.ru
 
 %changelog
 * <%= Time.now.strftime("%a %b %d %Y") %> Puppet Labs Release <info@puppetlabs.com> - <%= @rpmversion %>-<%= @rpmrelease %>
 - Build for <%= @version %>
 
-* Wed Oct 31 2012 Moses Mendoza <moses@puppetlabs.com> - 0.2.1-2.pe
-- Separate out a test package
+* Mon May 13 2013 Moses Mendoza <moses@puppetlabs.com> - 1.1.6-1.pe
+- Initial PE packaging for rubycas-server
 
-* Mon Oct 29 2012 Matthaus Owens <matthaus@puppetlabs.com> - 0.2.1-1.pe
-- Update to console 0.2.1
-
-* Fri Oct 26 2012 Matthaus Owens <matthaus@puppetlabs.com> - 0.2.0-2.pe
-- Add symlink to console/public => dashboard/public
-
-* Wed Oct 24 2012 Matthaus Owens <matthaus@puppetlabs.com> - 0.2.0-1.pe
-- Build for 0.2.0, add console.conf, config.yml
-
-* Tue Oct 23 2012 Moses Mendoza <moses@puppetlabs.com> - 0.1.1-1.pe
-- Build for 0.1.1
-
-* Mon Oct 08 2012 Matthaus Owens <matthaus@puppetlabs.com> - 0.1.0-1.pe
-- Initial build
