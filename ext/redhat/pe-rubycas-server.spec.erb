@@ -44,13 +44,14 @@ rm -rf $RPM_BUILD_ROOT
 install -d -m0755 $RPM_BUILD_ROOT%{_sysconfdir}/%{_name}
 install -d -m0755 $RPM_BUILD_ROOT%{_sysconfdir}/httpd/console_apps.d
 install -d -m0755 $RPM_BUILD_ROOT%{_datadir}/%{_name}
+install -d -m0755 $RPM_BUILD_ROOT%{_datadir}/puppet-dashboard/public
 
 cp -pr {db,gemfiles,lib,locales,public,tasks,Rakefile,config.ru} \
-  $RPM_BUILD_ROOT%{_datadir}%{_name}
+  $RPM_BUILD_ROOT%{_datadir}/%{_name}
 
-chmod uog+Xr -R $RPM_BUILD_ROOT/opt/puppet/share/%{_real_name}
+chmod uog+Xr -R $RPM_BUILD_ROOT/opt/puppet/share/%{_name}
 
-install -m0644 config/rubycas-server.vhost.conf %{_sysconfdir}/httpd/console_apps.d/
+install -m0644 config/rubycas-server.vhost.conf $RPM_BUILD_ROOT%{_sysconfdir}/httpd/console_apps.d/
 
 find $RPM_BUILD_ROOT%{_datadir}/%{_name} -type f | xargs chmod 644
 
@@ -72,7 +73,7 @@ done
 %{_datadir}/puppet-dashboard/public/cas
 
 # Ensure correct permissions on config.ru file
-%attr(644, pe-auth, pe-auth) %{_datadir}%{_real_name}/config.ru
+%attr(644, pe-auth, pe-auth) %{_datadir}/%{_name}/config.ru
 
 %changelog
 * <%= Time.now.strftime("%a %b %d %Y") %> Puppet Labs Release <info@puppetlabs.com> - <%= @rpmversion %>-<%= @rpmrelease %>
