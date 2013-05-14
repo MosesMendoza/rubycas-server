@@ -38,6 +38,9 @@ of Jasig's CAS protocol
 
 %build
 %install
+%if 0%{?suse_version}
+export NO_BRP_STALE_LINK_ERROR=yes
+%endif
 rm -rf $RPM_BUILD_ROOT
 
 # Setup directories
