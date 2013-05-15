@@ -12,6 +12,6 @@ group :active_resource do
 end
 
 group :postgresql do
-  gem "pg"
+  gem 'pg', '~> 0.15'
   gem "activerecord-postgresql-adapter"
 end
