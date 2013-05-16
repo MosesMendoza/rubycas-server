@@ -44,17 +44,6 @@ $gemspec = Gem::Specification.new do |s|
   s.add_development_dependency("webmock", "~> 1.8")
   s.add_development_dependency("nokogiri", "~> 1.3")
 
-  # pull in os specific FS monitoring lib for guard
-  case RUBY_PLATFORM
-  when /darwin/i
-    s.add_development_dependency("rb-fsevent", "~> 0.9.2")
-  when /linux/i
-    s.add_development_dependency("rb-inotify", "~> 0.8.8")
-  when /mswin|bccwin|wince/i
-    s.add_development_dependency('wdm', '~> 0.0.3') if RUBY_VERSION >= '1.9.2'
-    s.add_development_dependency('win32console', "~> 1.3.2")
-  end
-
   s.rdoc_options = [
     '--quiet', '--title', 'RubyCAS-Server Documentation', '--opname',
     'index.html', '--line-numbers', '--main', 'README.md', '--inline-source'
