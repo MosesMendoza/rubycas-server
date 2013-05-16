@@ -44,6 +44,14 @@ Example with Postgres database:
 
 Run `bundle exec rspec` - don't use `rake`.
 
+You need a postgres instance for the tests to pass. If you do not have a local postgres instance then you can point
+the tests at postgres on VM with PE installed:
+* Edit `/opt/puppet/var/lib/pgsql/9.2/data/postgresql.conf` and change the bottom `listen_addresses` to `'*'`
+* Restart pe-postgresql: `service pe-postgresql restart`
+* From your local machine, make sure you can `telnet <VM hostname> 5432`
+* Copy over `/etc/puppetlabs/rubycas-server/config.yml` from your VM to `config.yml` on your local machine.
+* Run `bundle exec rspec spec`
+
 ## License
 
 RubyCAS-Server is licensed for use under the terms of the MIT License.
