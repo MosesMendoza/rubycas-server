@@ -1,10 +1,15 @@
 source "http://rubygems.org"
 gemspec
 
+gem 'activerecord', '>= 2.3.12', '< 4.0'
+gem 'activesupport', '>= 2.3.12', '< 4.0'
+gem 'sinatra', '~> 1.3.6'
+gem 'crypt-isaac'
+gem 'sinatra-r18n'
 
 # Gems for authenticators
 group :ldap do
-    gem "net-ldap", "~> 0.1.1"
+  gem 'net-ldap'
 end
 
 group :active_resource do
@@ -14,6 +19,20 @@ end
 group :postgresql do
   gem 'pg', '~> 0.15'
   gem "activerecord-postgresql-adapter"
+end
+
+group :development, :test do
+  gem 'rack-test'
+  gem 'capybara', '1.1.2'
+  gem 'rspec'
+  gem 'rspec-core'
+  gem 'rake', '~> 0.9.3'
+  gem 'sqlite3', '~> 1.3.1'
+  gem 'appraisal', '~> 0.5.2'
+  gem 'guard', '~> 1.4.0'
+  gem 'guard-rspec', '2.0.0'
+  gem 'webmock', '~> 1.8'
+  gem 'nokogiri', '~> 1.3'
 end
 
 group :osx_test do
