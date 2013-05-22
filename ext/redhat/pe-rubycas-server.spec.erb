@@ -8,6 +8,7 @@
 %global _orig_prefix      %{_prefix}
 %global _prefix           /opt/puppet
 %global _sysconfdir       %{_real_sysconfdir}/puppetlabs
+%global rubycas_conf_dir  %{_sysconfdir}/%{_name}
 
 Name:           %{name_prefix}%{_name}
 Version:        %{rpmversion}
@@ -58,8 +59,12 @@ install -m0644 config/rubycas-server.vhost.conf $RPM_BUILD_ROOT%{_sysconfdir}/ht
 
 find $RPM_BUILD_ROOT%{_datadir}/%{_name} -type f | xargs chmod 644
 
+# Set up empty files that are symlinked in the installer
+install -d -m0755 $RPM_BUILD_ROOT%{rubycas_conf_dir}
+touch $RPM_BUILD_ROOT%{rubycas_conf_dir}/config.yml
+
 cd $RPM_BUILD_ROOT%{_datadir}/%{_name} ; \
-  ln -sf %{_sysconfdir}/%{_name}/config.yml config.yml
+  ln -sf %{rubycas_conf_dir}/config.yml config.yml
 
 cd $RPM_BUILD_ROOT%{_datadir}/puppet-dashboard/public ; \
   ln -sf ../../%{_name}/public cas
@@ -74,6 +79,7 @@ done
 %{_sysconfdir}/%{_name}
 %{_sysconfdir}/httpd/console_apps.d/rubycas-server.vhost.conf
 %{_datadir}/puppet-dashboard/public/cas
+%{rubycas_conf_dir}/config.yml
 
 # Ensure correct permissions on config.ru file
 %attr(644, pe-auth, pe-auth) %{_datadir}/%{_name}/config.ru
