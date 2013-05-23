@@ -4,11 +4,13 @@
 %global rpmversion        <%= @rpmversion %>
 
 %global name_prefix       pe-
-%global _real_sysconfdir  %{_sysconfdir}
-%global _orig_prefix      %{_prefix}
-%global _prefix           /opt/puppet
+%{!?_real_sysconfdir:     %global _real_sysconfdir  %{_sysconfdir}}
+%{!?_orig_prefix:         %global _orig_prefix      %{_prefix}}
+
 %global _sysconfdir       %{_real_sysconfdir}/puppetlabs
 %global rubycas_conf_dir  %{_sysconfdir}/%{_name}
+
+%global _prefix           /opt/puppet
 
 Name:           %{name_prefix}%{_name}
 Version:        %{rpmversion}
