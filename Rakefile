@@ -11,5 +11,9 @@ require 'rake'
 RAKE_ROOT = File.dirname(__FILE__)
 
 # Load tasks for packaging automation
-Dir[ File.join(RAKE_ROOT, 'ext', 'packaging', 'tasks', '*') ].sort.each { |t| load t }
+begin
+  load File.join(RAKE_ROOT, 'ext', 'packaging', 'packaging.rake')
+rescue LoadError
+end
+
 Dir[ File.join(RAKE_ROOT, 'lib', 'tasks', '*') ].sort.each { |t| load t }
