@@ -14,7 +14,8 @@ unless CASServer::Server.config['session_secret'].nil?
   use Rack::Session::Cookie,
     :key    => 'tgt',
     :path   => '/cas',
-    :secret => CASServer::Server.config['session_secret']
+    :secret => CASServer::Server.config['session_secret'],
+    :secure => true
 end
 
 use Rack::ShowExceptions
