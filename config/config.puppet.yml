@@ -79,4 +79,6 @@ log:
 enable_single_sign_out: true
 maximum_unused_login_ticket_lifetime: 300
 maximum_unused_service_ticket_lifetime: 300
-maximum_session_lifetime: 172800
+maximum_session_lifetime: 1200
+
+session_secret: this_is_a_session_secret_is_it_not_awesome
