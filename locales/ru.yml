@@ -9,6 +9,7 @@ error:
   invalid_target_service: "Сервис, указанный вашим браузером, неверен. Свяжитесь с вашим системным администратором."
   unable_to_authenticate: "Клиент и сервер не могут провести проверку прав. Попробуйте войти позже."
   no_service_parameter_given: "Этот сервер не может выполнить этот запрос, поскольку не были указаны праметры сервиса."
+  service_not_in_whitelist: "An invalid destination URL was provided. After you log in, you will be redirected to the front page of the Puppet Enterprise console."
 
 notice:
   logged_in_as: "Вы авторизированы как '%s'."

@@ -67,6 +67,68 @@ describe 'CASServer' do
       page.should have_xpath('//input[@id="service"]', :value => @target_service)
     end
 
+    describe "with a non-matching service" do
+      before do
+        @test_service = 'https://console.localdomain/test'
+        @console_base_url = 'http://my.app.test'
+
+        visit "/login?service="+CGI.escape(@test_service)
+      end
+
+      it "should display a warning message" do
+        page.should have_content("An invalid destination URL was provided. After you log in, you will be redirected to the front page of the Puppet Enterprise console.")
+      end
+
+      it "should redirect to console_base_url if the service is not on the whitelist" do
+        fill_in 'username', :with => VALID_USERNAME
+        fill_in 'password', :with => VALID_PASSWORD
+
+        click_button 'login-submit'
+        page.current_url.should =~ /^#{Regexp.escape(@console_base_url)}\/?\?ticket=ST\-[1-9rA-Z]+/
+      end
+
+      describe "if the service is on the whitelist" do
+        before do
+          @whitelist_service = 'https://example.com:444'
+
+          visit "/login?service="+CGI.escape(@whitelist_service)
+        end
+
+        it "should not display a warning message" do
+          page.should have_no_content("An invalid destination URL was provided. After you log in, you will be redirected to the front page of the Puppet Enterprise console.")
+        end
+
+        it "should redirect to the service if the service is on the whitelist" do
+          fill_in 'username', :with => VALID_USERNAME
+          fill_in 'password', :with => VALID_PASSWORD
+
+          click_button 'login-submit'
+          page.current_url.should =~ /^#{Regexp.escape(@whitelist_service)}\/?\?ticket=ST\-[1-9rA-Z]+/
+        end
+      end
+
+    end
+
+    describe "with service checking disabled" do
+      before do
+        load_server("alt_config")
+        @test_service = 'https://hello.com/foo/bar'
+        visit "/login?service="+CGI.escape(@test_service)
+      end
+
+      it "should not display a warning message" do
+        page.should have_no_content("An invalid destination URL was provided. After you log in, you will be redirected to the front page of the Puppet Enterprise console.")
+      end
+
+      it "should redirect to the service" do
+        fill_in 'username', :with => VALID_USERNAME
+        fill_in 'password', :with => VALID_PASSWORD
+
+        click_button 'login-submit'
+        page.current_url.should =~ /^#{Regexp.escape(@test_service)}\/?\?ticket=ST\-[1-9rA-Z]+/
+      end
+    end
+
     it "uses appropriate localization based on Accept-Language header" do
 
       page.driver.options[:headers] = {'HTTP_ACCEPT_LANGUAGE' => 'pl'}

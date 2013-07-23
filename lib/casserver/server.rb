@@ -332,7 +332,7 @@ module CASServer
       disable_caching
 
       # optional params
-      @service = clean_service_url(params['service'])
+      @service = check_service_url(params['service'])
       @renew = params['renew']
       @gateway = params['gateway'] == 'true' || params['gateway'] == '1'
 
@@ -424,7 +424,7 @@ module CASServer
       Utils::log_controller_action(self.class, params)
 
       # 2.2.1 (optional)
-      @service = clean_service_url(params['service'])
+      @service = check_service_url(params['service'])
 
       # 2.2.2 (required)
       @username = params['username']
@@ -542,7 +542,7 @@ module CASServer
       # "logout" page, we take the user back to the login page with a "you have been logged out"
       # message, allowing for an opportunity to immediately log back in. This makes it
       # easier for the user to log out and log in as someone else.
-      @service = clean_service_url(params['service'] || params['destination'])
+      @service = check_service_url(params['service'] || params['destination'])
       @continue_url = params['url']
 
       @gateway = params['gateway'] == 'true' || params['gateway'] == '1'
@@ -637,7 +637,7 @@ module CASServer
 
       if ip_allowed?(request.ip)
         # required
-        @service = clean_service_url(params['service'])
+        @service = check_service_url(params['service'])
         @ticket = params['ticket']
         # optional
         @renew = params['renew']
@@ -668,7 +668,7 @@ module CASServer
 
       if ip_allowed?(request.ip)
         # required
-        @service = clean_service_url(params['service'])
+        @service = check_service_url(params['service'])
         @ticket = params['ticket']
         # optional
         @pgt_url = params['pgtUrl']
@@ -709,7 +709,7 @@ module CASServer
       if ip_allowed?(request.ip)
 
         # required
-        @service = clean_service_url(params['service'])
+        @service = check_service_url(params['service'])
         @ticket = params['ticket']
         # optional
         @pgt_url = params['pgtUrl']
@@ -807,6 +807,45 @@ module CASServer
       allowed_ips = Array(settings.config[:allowed_service_ips])
 
       allowed_ips.empty? || allowed_ips.any? { |i| IPAddr.new(i) === ip }
+    end
+
+    def check_service_url(service_url)
+      clean_url = clean_service_url(service_url)
+
+      return clean_url if clean_url.blank? || settings.config[:disable_service_check]
+
+      base_url = settings.config[:console_base_url] || '/'
+      base = uri_info(base_url)
+
+      service = uri_info(clean_url)
+
+      service_whitelist = Array(settings.config[:service_whitelist])
+      whitelist = service_whitelist.map { |uri| uri_info(uri) }
+
+      if service == base || whitelist.include?(service)
+        return clean_url
+      else
+        # if the service url is not on the whitelist, provide an error message
+        # and then redirect to the console base url after login
+        error = <<ERROR
+An invalid destination URL was provided. After you log in, you will be
+redirected to the front page of the Puppet Enterprise console. If you are a
+Puppet Enterprise administrator and want to allow redirection to non-console
+URLs from the login page, see the Puppet Enterprise documentation for more
+details. (http://docs.puppetlabs.com/pe/latest/console_config.html)
+ERROR
+        $LOG.error(error)
+        @message = {:type => 'mistake',
+          :message => t.error.service_not_in_whitelist}
+
+        return base_url
+      end
+    end
+
+    # Strip whitespace from given URI and encode it, then return an array with
+    # its scheme, host, and port
+    def uri_info(uri)
+      URI.parse(URI.encode(uri.strip)).select(:scheme, :host, :port)
     end
 
     helpers do

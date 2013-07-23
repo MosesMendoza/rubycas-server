@@ -49,5 +49,10 @@ enable_single_sign_out: true
 
 #downcase_username: true
 
+console_base_url: http://my.app.test
+
+service_whitelist:
+  - https://example.com:444
+
 allowed_service_ips:
   - 127.0.0.0/24
