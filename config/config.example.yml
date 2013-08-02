@@ -436,6 +436,10 @@ infoline: Powered by <a href="http://rubycas.github.com">RubyCAS-Server</a>
 # settings you may have in your web server's config).
 #public_dir: /path/to/custom/public
 
+# Custom base URL for fetching assets from a different server/process. If blank all
+# assets will be served from `/` on the current server.
+# console_base_url:
+
 ##### LOCALIZATION (L10N) #######################################################
 # The server will attempt to detect the user's locale and show text in the
 # appropriate language based on:
