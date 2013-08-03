@@ -9,6 +9,7 @@ error:
   invalid_target_service: "ブラウザが示す対象サービスは無効のようです。システム管理者に連絡してください。"
   unable_to_authenticate: "クライアントとサーバー間で認証ができませんでした。しばらくしてから再度ログインしてください。"
   no_service_parameter_given: "サービスパラメーターが指定されていないので、サーバーはゲートウェイリクエストを満たす事ができません。"
+  service_not_in_whitelist: "An invalid destination URL was provided. After you log in, you will be redirected to the front page of the Puppet Enterprise console."
 
 notice:
   logged_in_as: "'%1'としてログインしています。違うユーザーでログインするには下に入力してくだ さい。"

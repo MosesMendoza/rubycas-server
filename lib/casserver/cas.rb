@@ -313,7 +313,7 @@ module CASServer::CAS
       clean_service.sub!(Regexp.new("&?#{p}=[^&]*"), '')
     end
 
-    clean_service.gsub!(/[\/\?&]$/, '') # remove trailing ?, /, or &
+    clean_service.gsub!(/[\?&]$/, '') # remove trailing ?, or &
     clean_service.gsub!('?&', '?')
     clean_service.gsub!(' ', '+')
 

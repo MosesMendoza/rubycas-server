@@ -48,3 +48,5 @@ enable_single_sign_out: true
 #maximum_session_lifetime: 172800
 
 #downcase_username: true
+
+disable_service_check: true
