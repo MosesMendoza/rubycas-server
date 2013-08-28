@@ -845,7 +845,7 @@ ERROR
     # Strip whitespace from given URI and encode it, then return an array with
     # its scheme, host, and port
     def uri_info(uri)
-      URI.parse(URI.encode(uri.strip)).select(:scheme, :host, :port)
+      URI.parse(URI.escape(uri.strip)).select(:scheme, :host, :port)
     end
 
     helpers do
