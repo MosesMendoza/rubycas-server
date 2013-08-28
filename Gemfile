@@ -3,7 +3,7 @@ gemspec
 
 gem 'activerecord', '>= 2.3.12', '< 4.0'
 gem 'activesupport', '>= 2.3.12', '< 4.0'
-gem 'sinatra', '~> 1.3.6'
+gem 'sinatra', '~> 1.4.3'
 gem 'crypt-isaac'
 gem 'sinatra-r18n'
 
