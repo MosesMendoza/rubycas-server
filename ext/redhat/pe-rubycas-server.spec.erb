@@ -82,7 +82,7 @@ done
 %{_sysconfdir}/%{_name}
 %{_sysconfdir}/httpd/console_apps.d/rubycas-server.vhost.conf
 %{_datadir}/puppet-dashboard/public/cas
-%{rubycas_conf_dir}/config.yml
+%config(noreplace) %{rubycas_conf_dir}/config.yml
 
 # Ensure correct permissions on config.ru file
 %attr(644, pe-auth, pe-auth) %{_datadir}/%{_name}/config.ru
